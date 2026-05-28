@@ -3,3 +3,9 @@ node_modules/
 *.log
 .pi-lens/
 test-harness.cjs
+# Local Pi runtime state (skill-registry.md is versioned)
+.atl/*
+!.atl/skill-registry.md
+
+# Personal pi config
+.pi/
