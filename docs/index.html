@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Primary SEO -->
+    <title>Pi Google Stitch Tools — @zyvra-labs/pi-stitch-tools</title>
+    <meta
+      name="description"
+      content="Google Stitch tools for Pi (pi.dev). Generate, edit, and manage Stitch UI designs directly from your Pi coding session — no manual MCP configuration."
+    />
+    <meta
+      name="keywords"
+      content="pi, pi.dev, stitch, google-stitch, mcp, design-tools, ui-generation, ai-design, pi-package, pi-extension"
+    />
+
+    <!-- Open Graph -->
+    <meta
+      property="og:title"
+      content="Pi Google Stitch Tools — @zyvra-labs/pi-stitch-tools"
+    />
+    <meta
+      property="og:description"
+      content="The dedicated Pi package for Google Stitch. Install with pi install npm:@zyvra-labs/pi-stitch-tools and start generating UI designs from text."
+    />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:url"
+      content="https://zyvralabs.github.io/pi-stitch-tools/"
+    />
+    <meta
+      property="og:image"
+      content="https://raw.githubusercontent.com/zyvralabs/pi-stitch-tools/master/screenshot.png"
+    />
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://zyvralabs.github.io/pi-stitch-tools/" />
+
+    <!-- Structured data: SoftwareApplication -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "@zyvra-labs/pi-stitch-tools",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "All",
+        "description": "Google Stitch tools for Pi (pi.dev). Generate, edit, and manage Stitch UI designs directly from your Pi coding session.",
+        "url": "https://github.com/zyvralabs/pi-stitch-tools",
+        "installUrl": "https://www.npmjs.com/package/@zyvra-labs/pi-stitch-tools",
+        "author": {
+          "@type": "Organization",
+          "name": "zyvra-labs"
+        }
+      }
+    </script>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        background: #0d1117;
+        color: #c9d1d9;
+        line-height: 1.6;
+        max-width: 820px;
+        margin: 0 auto;
+        padding: 40px 24px;
+      }
+      h1 {
+        font-size: 2rem;
+        color: #58a6ff;
+        margin-bottom: 8px;
+      }
+      .subtitle {
+        color: #8b949e;
+        font-size: 1.05rem;
+        margin-bottom: 32px;
+      }
+      h2 {
+        font-size: 1.35rem;
+        color: #f0f6fc;
+        margin: 36px 0 12px;
+        border-bottom: 1px solid #21262d;
+        padding-bottom: 8px;
+      }
+      p,
+      li {
+        margin-bottom: 10px;
+      }
+      a {
+        color: #58a6ff;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      pre {
+        background: #161b22;
+        border: 1px solid #30363d;
+        border-radius: 6px;
+        padding: 14px 18px;
+        overflow-x: auto;
+        font-family:
+          "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        font-size: 0.9rem;
+        margin-bottom: 16px;
+      }
+      code {
+        font-family:
+          "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        font-size: 0.9rem;
+        background: #161b22;
+        padding: 2px 6px;
+        border-radius: 4px;
+        border: 1px solid #30363d;
+      }
+      pre code {
+        background: none;
+        border: none;
+        padding: 0;
+      }
+      .badge {
+        display: inline-block;
+        background: #238636;
+        color: #fff;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-right: 6px;
+      }
+      .card {
+        background: #161b22;
+        border: 1px solid #30363d;
+        border-radius: 8px;
+        padding: 20px 24px;
+        margin-bottom: 16px;
+      }
+      .hero-links {
+        margin-top: 16px;
+      }
+      .hero-links a {
+        display: inline-block;
+        margin-right: 16px;
+        padding: 8px 16px;
+        background: #21262d;
+        border: 1px solid #30363d;
+        border-radius: 6px;
+        font-weight: 500;
+      }
+      .hero-links a:hover {
+        background: #30363d;
+        text-decoration: none;
+      }
+      ul {
+        padding-left: 24px;
+        margin-bottom: 16px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 16px;
+      }
+      th,
+      td {
+        padding: 10px 14px;
+        text-align: left;
+        border: 1px solid #30363d;
+      }
+      th {
+        background: #161b22;
+        color: #f0f6fc;
+      }
+      td {
+        font-size: 0.92rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Pi Google Stitch Tools</h1>
+    <p class="subtitle">
+      <code>@zyvra-labs/pi-stitch-tools</code> <span class="badge">v0.3.3</span>
+    </p>
+
+    <p>
+      <strong>@zyvra-labs/pi-stitch-tools</strong> is the dedicated
+      <strong>Pi</strong> (<a href="https://pi.dev">pi.dev</a>) package for
+      <strong>Google Stitch</strong>. Install it and you get Stitch tools inside
+      Pi — generate, edit, and manage UI designs from text, without manually
+      configuring MCP.
+    </p>
+
+    <div class="hero-links">
+      <a href="https://github.com/zyvralabs/pi-stitch-tools">📦 GitHub</a>
+      <a href="https://www.npmjs.com/package/@zyvra-labs/pi-stitch-tools"
+        >📋 npm</a
+      >
+      <a href="https://stitch.withgoogle.com">🎨 Google Stitch</a>
+    </div>
+
+    <h2>Install</h2>
+    <pre><code>pi install npm:@zyvra-labs/pi-stitch-tools</code></pre>
+    <p>After installing, restart Pi or run <code>/reload</code>.</p>
+
+    <h2>Configure</h2>
+    <p>Set your Stitch API key via any of these methods:</p>
+
+    <div class="card">
+      <strong>Environment variable:</strong>
+      <pre><code>export STITCH_API_KEY="your-key"
+# or
+export GOOGLE_STITCH_API_KEY="your-key"</code></pre>
+
+      <strong>File:</strong>
+      <pre><code>echo "your-key" > ~/.pi/stitch-api-key</code></pre>
+
+      <strong>Legacy mcp.json:</strong> if you already have Stitch in
+      <code>~/.pi/agent/mcp.json</code>, it's auto-detected.
+    </div>
+
+    <h2>Verify</h2>
+    <pre><code>/stitch-status</code></pre>
+    <p>Expected output: <code>Stitch: 14 tools loaded</code></p>
+
+    <h2>Commands</h2>
+    <table>
+      <tr>
+        <th>Command</th>
+        <th>Description</th>
+      </tr>
+      <tr>
+        <td><code>/stitch-status</code></td>
+        <td>Show loaded tools and API status</td>
+      </tr>
+      <tr>
+        <td><code>/stitch-projects</code></td>
+        <td>List your Stitch projects</td>
+      </tr>
+      <tr>
+        <td><code>/stitch-new-screen &lt;id&gt; &lt;prompt&gt;</code></td>
+        <td>Generate a screen from description</td>
+      </tr>
+      <tr>
+        <td><code>/stitch-theme &lt;id&gt;</code></td>
+        <td>List design systems for a project</td>
+      </tr>
+      <tr>
+        <td><code>/stitch-help</code></td>
+        <td>Show all available Stitch commands</td>
+      </tr>
+    </table>
+
+    <h2>Available Tools</h2>
+    <p>
+      All Google Stitch tools are available under the
+      <code>stitch_</code> prefix:
+    </p>
+    <ul>
+      <li><code>stitch_list_projects</code> — List your Stitch projects</li>
+      <li><code>stitch_get_project</code> — Get project details</li>
+      <li><code>stitch_create_project</code> — Create a new project</li>
+      <li><code>stitch_list_screens</code> — List screens in a project</li>
+      <li><code>stitch_get_screen</code> — Get screen details</li>
+      <li>
+        <code>stitch_generate_screen_from_text</code> — Generate a screen from
+        text
+      </li>
+      <li><code>stitch_edit_screens</code> — Edit existing screens</li>
+      <li><code>stitch_generate_variants</code> — Generate design variants</li>
+      <li><code>stitch_create_design_system</code> — Create a design system</li>
+      <li><code>stitch_update_design_system</code> — Update a design system</li>
+      <li>
+        <code>stitch_apply_design_system</code> — Apply design system to screens
+      </li>
+      <li><code>stitch_list_design_systems</code> — List design systems</li>
+      <li><code>stitch_upload_design_md</code> — Upload DESIGN.md</li>
+      <li>
+        <code>stitch_create_design_system_from_design_md</code> — Create DS from
+        DESIGN.md
+      </li>
+    </ul>
+
+    <h2>When to use this package</h2>
+    <div class="card">
+      <p>
+        <strong>✅ Use <code>@zyvra-labs/pi-stitch-tools</code> if:</strong>
+      </p>
+      <ul>
+        <li>
+          You want to use Google Stitch from Pi without manually configuring an
+          MCP client
+        </li>
+        <li>
+          You need Stitch tools available as native Pi slash commands
+          (<code>/stitch-status</code>, <code>/stitch-projects</code>)
+        </li>
+        <li>
+          You want automatic tool discovery — new Stitch tools appear without
+          updating the package
+        </li>
+      </ul>
+      <p style="margin-top: 12px">
+        <strong>❌ Use a generic MCP adapter instead if:</strong>
+      </p>
+      <ul>
+        <li>
+          You need to connect many different MCP servers with full custom
+          configuration
+        </li>
+        <li>
+          You require fine-grained control over MCP transport, auth, and tool
+          filtering
+        </li>
+      </ul>
+    </div>
+
+    <h2>Examples</h2>
+    <div class="card">
+      <p><strong>Create a new screen:</strong></p>
+      <pre><code>/stitch-new-screen my-project "A SaaS analytics dashboard with cards and charts"</code></pre>
+
+      <p><strong>List your projects:</strong></p>
+      <pre><code>/stitch-projects</code></pre>
+
+      <p><strong>Generate from natural language:</strong></p>
+      <pre><code>stitch_generate_screen_from_text projectId=14082150201392761251 prompt="Login page with email, password, and social login buttons"</code></pre>
+
+      <p><strong>Create a design system:</strong></p>
+      <pre><code>stitch_create_design_system projectId=14082150201392761251 designSystem='{"displayName":"SaaS Dark","theme":{"colorMode":"DARK","headlineFont":"INTER","bodyFont":"INTER","roundness":"ROUND_EIGHT","customColor":"#4f46e5"}}'</code></pre>
+    </div>
+
+    <h2>Troubleshooting</h2>
+    <table>
+      <tr>
+        <th>Problem</th>
+        <th>Solution</th>
+      </tr>
+      <tr>
+        <td><code>/stitch-status</code> shows 0 tools</td>
+        <td>
+          Run <code>/reload</code>, then check your API key with <br /><code
+            >cat ~/.pi/stitch-api-key</code
+          >
+          or <code>echo $STITCH_API_KEY</code>
+        </td>
+      </tr>
+      <tr>
+        <td>Authentication failed</td>
+        <td>
+          Make sure your Stitch API key is valid and has access to Google Stitch
+        </td>
+      </tr>
+      <tr>
+        <td>API key not found</td>
+        <td>
+          Set <code>STITCH_API_KEY</code> or <code>GOOGLE_STITCH_API_KEY</code>,
+          or write key to <code>~/.pi/stitch-api-key</code>
+        </td>
+      </tr>
+      <tr>
+        <td>Stitch unavailable</td>
+        <td>
+          Check internet connection. The extension connects to
+          <code>stitch.googleapis.com/mcp</code>
+        </td>
+      </tr>
+    </table>
+
+    <h2>How it works</h2>
+    <p>
+      The extension connects directly to the Google Stitch MCP endpoint
+      (<code>stitch.googleapis.com/mcp</code>) over HTTP. Tools are registered
+      dynamically from the server's <code>tools/list</code> response — no
+      hardcoded tool definitions, no MCP client dependency, only Node.js
+      built-ins.
+    </p>
+
+    <hr style="border-color: #21262d; margin: 40px 0 20px" />
+
+    <p style="color: #8b949e; font-size: 0.9rem">
+      Built by <a href="https://github.com/zyvralabs">zyvra-labs</a> · MIT
+      License ·
+      <a href="https://github.com/zyvralabs/pi-stitch-tools">Source</a> ·
+      <a href="https://www.npmjs.com/package/@zyvra-labs/pi-stitch-tools"
+        >npm</a
+      >
+    </p>
+  </body>
+</html>

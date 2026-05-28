@@ -7,11 +7,16 @@
     "test": "node --test test/unit.test.js"
   },
   "keywords": [
+    "pi",
+    "pi.dev",
     "pi-package",
     "stitch",
     "google-stitch",
+    "mcp",
     "ui-design",
+    "ui-generation",
     "design-tools",
+    "ai-design",
     "frontend",
     "prototyping"
   ],

@@ -110,6 +110,19 @@ Common tools include:
 | `stitch_upload_design_md` | Upload a DESIGN.md file |
 | `stitch_create_design_system_from_design_md` | Create design system from DESIGN.md |
 
+## When to use this package
+
+**✅ Use `@zyvra-labs/pi-stitch-tools` if:**
+- You want to use Google Stitch from Pi without manually configuring an MCP client
+- You need Stitch tools available as native Pi slash commands (`/stitch-status`, `/stitch-projects`)
+- You want automatic tool discovery — new Stitch tools appear without updating the package
+- You prefer a plug-and-play experience: install, set your key, and go
+
+**❌ Consider a generic MCP adapter instead if:**
+- You need to connect many different MCP servers under full custom configuration
+- You require fine-grained control over MCP transport, auth, and tool filtering
+- You already have an existing MCP workflow and want Stitch as one server among many
+
 ## Troubleshooting
 
 ### "API key not found"
