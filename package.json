@@ -1,8 +1,11 @@
 {
   "name": "@zyvra-labs/pi-stitch-tools",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Google Stitch UI design tools for pi — generate, edit, and manage designs directly from your coding session.",
   "type": "module",
+  "scripts": {
+    "test": "node --test test/unit.test.js"
+  },
   "keywords": [
     "pi-package",
     "stitch",
