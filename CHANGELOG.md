@@ -5,6 +5,20 @@ All notable changes to `@zyvra-labs/pi-stitch-tools` are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.4] — 2026-05-28
+
+### Fixed
+
+- **Timeout de 30s era insuficiente** para generación de screens. Las tools de generación (`generate_screen_from_text`, `edit_screens`, `generate_variants`, `create_design_system_from_design_md`) ahora tienen 180s de timeout. Las tools rápidas (`list_projects`, `get_screen`, etc.) mantienen 30s.
+- **Retry en timeout empeoraba las cosas**: las gen tools ya no retryan en timeout (respeta el spec de Stitch "DO NOT RETRY"). Pero siguen retryando en errores de red transitorios (500, network blip).
+- **Mensajes de error genéricos**: ahora detectan cuándo el timeout es por el parámetro `designSystem` y sugieren el workaround (generar sin design system → aplicar después).
+- **`apply_design_system`** removido de la lista de tools lentas — es una operación rápida.
+
+### Added
+
+- **Skill `stitch-generate-screen`**: documentación del approach en dos pasos como método recomendado, más sección "Known Issues".
+- **Hallazgo documentado**: `deviceType: "AGNOSTIC"` es más confiable que `"DESKTOP"` cuando Stitch está bajo carga.
+
 ## [0.3.0] — 2026-05-27
 
 ### Added
