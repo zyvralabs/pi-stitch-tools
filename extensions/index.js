@@ -6,9 +6,18 @@ import { readFile } from "node:fs/promises";
 
 const STITCH_URL = "https://stitch.googleapis.com/mcp";
 const REQUEST_TIMEOUT_MS = 30_000;
+const GENERATION_TIMEOUT_MS = 180_000; // 3 min for generation tools
 const MAX_RETRIES = 3;
 const RETRY_BASE_DELAY_MS = 1000;
 const RETRY_MAX_DELAY_MS = 10_000;
+
+// Stitch generation tools that can take >1 min (DO NOT RETRY on timeout per spec)
+const SLOW_TOOL_NAMES = new Set([
+	"generate_screen_from_text",
+	"edit_screens",
+	"generate_variants",
+	"create_design_system_from_design_md",
+]);
 
 // Environment variable names checked for the API key
 const API_KEY_ENV_VARS = ["STITCH_API_KEY", "GOOGLE_STITCH_API_KEY"];
@@ -184,12 +193,12 @@ function sleep(ms) {
 	return new Promise((resolve) => setTimeout(resolve, ms + jitter));
 }
 
-function createTimeoutContext(signal) {
+function createTimeoutContext(signal, timeoutMs = REQUEST_TIMEOUT_MS) {
 	if (
 		typeof AbortSignal?.timeout === "function" &&
 		typeof AbortSignal?.any === "function"
 	) {
-		const timeoutSignal = AbortSignal.timeout(REQUEST_TIMEOUT_MS);
+		const timeoutSignal = AbortSignal.timeout(timeoutMs);
 		return {
 			signal: signal ? AbortSignal.any([signal, timeoutSignal]) : timeoutSignal,
 			cleanup() {},
@@ -199,7 +208,7 @@ function createTimeoutContext(signal) {
 	const controller = new AbortController();
 	const timeoutId = setTimeout(
 		() => controller.abort(new Error("Stitch request timed out")),
-		REQUEST_TIMEOUT_MS,
+		timeoutMs,
 	);
 	const abortFromParent = () => controller.abort(signal?.reason);
 
@@ -220,11 +229,18 @@ function createTimeoutContext(signal) {
 	};
 }
 
-async function stitchRequest(apiKey, method, params = {}, signal) {
+async function stitchRequest(
+	apiKey,
+	method,
+	params = {},
+	signal,
+	timeoutMs = REQUEST_TIMEOUT_MS,
+	noTimeoutRetry = false,
+) {
 	let lastError;
 
 	for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
-		const timeoutContext = createTimeoutContext(signal);
+		const timeoutContext = createTimeoutContext(signal, timeoutMs);
 
 		try {
 			const response = await fetch(STITCH_URL, {
@@ -266,7 +282,16 @@ async function stitchRequest(apiKey, method, params = {}, signal) {
 			return payload?.result;
 		} catch (error) {
 			lastError = error;
-			if (attempt < MAX_RETRIES && shouldRetry(error)) {
+
+			const isTimeoutError =
+				error?.name === "AbortError" ||
+				error?.message?.includes("AbortError") ||
+				error?.message?.toLowerCase().includes("timeout") ||
+				error?.message?.includes("timed out") ||
+				error?.message?.includes("ETIMEDOUT");
+			const dontRetry = noTimeoutRetry && isTimeoutError;
+
+			if (attempt < MAX_RETRIES && shouldRetry(error) && !dontRetry) {
 				const delay = Math.min(
 					RETRY_BASE_DELAY_MS * 2 ** attempt,
 					RETRY_MAX_DELAY_MS,
@@ -348,6 +373,11 @@ export default async function stitchToolsExtension(pi) {
 			parameters: inputSchema,
 			executionMode,
 			async execute(_toolCallId, params, signal) {
+				const toolTimeout = SLOW_TOOL_NAMES.has(stitchTool.name)
+					? GENERATION_TIMEOUT_MS
+					: REQUEST_TIMEOUT_MS;
+				const toolNoTimeoutRetry = SLOW_TOOL_NAMES.has(stitchTool.name);
+
 				try {
 					const result = await stitchRequest(
 						apiKey,
@@ -357,6 +387,8 @@ export default async function stitchToolsExtension(pi) {
 							arguments: params || {},
 						},
 						signal,
+						toolTimeout,
+						toolNoTimeoutRetry,
 					);
 
 					return {
@@ -369,11 +401,26 @@ export default async function stitchToolsExtension(pi) {
 						},
 					};
 				} catch (error) {
+					const isTimeout =
+						error?.message?.toLowerCase().includes("timeout") ||
+						error?.message?.includes("AbortError") ||
+						error?.name === "AbortError";
+					const isGenerationTimeout =
+						isTimeout && SLOW_TOOL_NAMES.has(stitchTool.name);
+					const hasDesignSystem = params?.designSystem != null;
+
+					let message;
+					if (isGenerationTimeout && hasDesignSystem) {
+						message = `${stitchTool.name}: generation timed out. The designSystem parameter significantly increases processing time. Generate without designSystem first, then apply the design system with stitch_apply_design_system.`;
+					} else if (isGenerationTimeout) {
+						message = `${stitchTool.name}: generation timed out after ${toolTimeout / 1000}s. The Stitch API may be experiencing transient issues. The server may still be processing — check your Stitch project for the result, or try listing screens. If this persists, wait a few minutes and try again with a simpler prompt or different deviceType. DO NOT retry immediately.`;
+					} else {
+						message = `Stitch tool failed: ${error.message}`;
+					}
+
 					return {
 						isError: true,
-						content: [
-							{ type: "text", text: `Stitch tool failed: ${error.message}` },
-						],
+						content: [{ type: "text", text: message }],
 						details: { stitchTool: stitchTool.name },
 					};
 				}
@@ -446,11 +493,21 @@ export default async function stitchToolsExtension(pi) {
 			const prompt = input.slice(spaceIdx + 1);
 
 			try {
-				ctx.ui.notify("Generating screen (this may take a minute)...", "info");
-				const result = await stitchRequest(apiKey, "tools/call", {
-					name: "generate_screen_from_text",
-					arguments: { projectId, prompt },
-				});
+				ctx.ui.notify(
+					"Generating screen (this may take 1-3 minutes)...",
+					"info",
+				);
+				const result = await stitchRequest(
+					apiKey,
+					"tools/call",
+					{
+						name: "generate_screen_from_text",
+						arguments: { projectId, prompt },
+					},
+					undefined,
+					GENERATION_TIMEOUT_MS,
+					true,
+				);
 
 				const content = result?.content;
 				if (Array.isArray(content)) {
@@ -466,7 +523,10 @@ export default async function stitchToolsExtension(pi) {
 					ctx.ui.notify("Screen generated! Check your Stitch project.", "info");
 				}
 			} catch (error) {
-				ctx.ui.notify(`Screen generation failed: ${error.message}`, "error");
+				const msg = error?.message?.toLowerCase().includes("timeout")
+					? `Screen generation timed out. Try without designSystem first, then apply the design system with /stitch-apply-theme.`
+					: `Screen generation failed: ${error.message}`;
+				ctx.ui.notify(msg, "error");
 			}
 		},
 	});

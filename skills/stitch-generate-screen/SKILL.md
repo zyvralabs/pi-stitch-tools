@@ -61,10 +61,29 @@ A modern SaaS landing page for a developer tool. Hero section with headline "Bui
 Mobile login screen for a fintech app. Email and password fields with labels above. "Sign In" button full-width at bottom. "Forgot password?" link below the form. Clean white background with subtle branding at top. iOS-style design.
 ```
 
-### Step 4: Generate
+### Step 4: Generate (two approaches)
 
+**⚠️ Known limitation:** Passing `designSystem` during generation can cause timeouts because Stitch processes design tokens during generation.
+
+#### Approach A: Generate with design system (fast if it works)
 ```text
 stitch_generate_screen_from_text projectId="<project-id>" prompt="<detailed prompt>" designSystem="<design-system-id>" deviceType="<type>"
+```
+If this times out, fall back to Approach B.
+
+#### Approach B: Generate first, apply design system after (recommended, more reliable)
+Step 1 — Generate without design system:
+```text
+stitch_generate_screen_from_text projectId="<project-id>" prompt="<detailed prompt>" deviceType="<type>"
+```
+
+Step 2 — Apply the design system to the generated screen:
+```text
+stitch_get_project name="projects/<project-id>"
+```
+Note the screen instance IDs, then:
+```text
+stitch_apply_design_system projectId="<project-id>" selectedScreenInstances='[{"id": "<screen-instance-id>", "sourceScreen": "projects/<project-id>/screens/<screen-id>"}]' assetId="<design-system-asset-id>"
 ```
 
 Generation can take 1-3 minutes. The tool may return `output_components` with suggestions — present these to the user.
@@ -102,3 +121,11 @@ The generated screen exists in Stitch. From here the user can:
 - Generate variants with `stitch_generate_variants`
 - Apply/change the design system with `stitch_apply_design_system`
 - Export or use as reference for frontend implementation
+
+## Known Issues
+
+### designSystem timeout
+
+Passing the `designSystem` parameter to `stitch_generate_screen_from_text` can cause HTTP timeouts because Stitch applies design tokens during generation, which significantly increases processing time.
+
+**Workaround:** Generate the screen without `designSystem`, then apply the design system separately with `stitch_apply_design_system`. This two-step approach is more reliable.
