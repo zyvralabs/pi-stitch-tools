@@ -513,6 +513,24 @@ export default async function stitchToolsExtension(pi) {
 		},
 	});
 
+	pi.registerCommand("stitch-help", {
+		description: "Show available Stitch commands and quick usage",
+		handler: async (_args, ctx) => {
+			const help = [
+				"Stitch commands:",
+				"",
+				"  /stitch-status              — Show loaded tools and API status",
+				"  /stitch-projects            — List your Stitch projects",
+				"  /stitch-new-screen <id> <p> — Generate a screen from a prompt",
+				"  /stitch-theme <id>          — List design systems for a project",
+				"  /stitch-help                — Show this help",
+				"",
+				`${stitchTools.length} Stitch tools available — just describe what you want in natural language and pi will call the right one.`,
+			].join("\n");
+			ctx.ui.notify(help, "info");
+		},
+	});
+
 	pi.on("session_start", (_event, ctx) => {
 		ctx.ui.setStatus("stitch-tools", `stitch: ${stitchTools.length} tools`);
 	});

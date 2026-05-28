@@ -75,6 +75,18 @@ stitch_create_design_system projectId=14082150201392761251 designSystem='{"displ
 
 > **Pro tip:** In pi, you don't need to construct the JSON by hand. Just describe what you want in natural language and pi will call the right tool with the right parameters.
 
+## Convenience commands
+
+Quick-access slash commands for common operations:
+
+| Command | Usage |
+|---------|-------|
+| `/stitch-status` | Show loaded tools and API status |
+| `/stitch-projects` | List your Stitch projects |
+| `/stitch-new-screen <id> <prompt>` | Generate a screen from a description |
+| `/stitch-theme <id>` | List design systems for a project |
+| `/stitch-help` | Show all available Stitch commands |
+
 ## Available tools
 
 The extension registers all tools advertised by the upstream Stitch MCP server. Run `/stitch-status` to see the full list.
@@ -129,6 +141,8 @@ Key design decisions:
 ## License
 
 MIT — see [LICENSE](./LICENSE) file.
+
+Changes are tracked in [CHANGELOG.md](./CHANGELOG.md).
 
 ## Contributing
 
